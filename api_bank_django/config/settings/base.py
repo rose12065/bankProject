@@ -41,7 +41,11 @@ THIRD_PART_APPS=[
     "django_celery_beat"
 ]
 
-LOCAL_APPS= []
+LOCAL_APPS= [
+    "core_apps.user_auth",
+    "core_apps.user_profile",
+    "core_apps.common",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PART_APPS + LOCAL_APPS
 
