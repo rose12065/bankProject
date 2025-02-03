@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from os import getenv,path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve(strict-True).parent.parent.parent
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 
 APPS_DIR = BASE_DIR/ "core_apps"
@@ -32,11 +32,11 @@ DJANGO_APPS = [
 THIRD_PART_APPS=[
     "rest_framework",
     "django_countries",
-    "phonenumber_feild",
+    "phonenumber_field",
     "drf_spectacular",
     "djoser",
     "cloudinary",
-    "django_filter",
+    # "django_filter",
     "djcelery_email",
     "django_celery_beat"
 ]
