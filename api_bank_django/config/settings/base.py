@@ -3,6 +3,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from os import getenv,path
+from loguru import logger
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -38,7 +39,7 @@ THIRD_PART_APPS=[
     "cloudinary",
     # "django_filter",
     "djcelery_email",
-    "django_celery_beat"
+    "django_celery_beat",
 ]
 
 LOCAL_APPS= [
@@ -85,8 +86,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': getenv("POSTGRES_DB"),
+        'USER': getenv("POSTGRES_USER"),
+        'PASSWORD': getenv("POSTGRES_PASSWORD"),
+        'PORT': getenv("POSTGRES_PORT"),
     }
 }
 
@@ -140,3 +144,44 @@ STATIS_ROOT = str(BASE_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGIN_CONFIG = None
+
+
+LOGURU_LOGGING = {
+    "handlers": [
+        {
+            "sink": BASE_DIR/"logs/debug.log",
+            "level": "DEBUG",
+            "filter": lambda record: record["level"].name in ["DEBUG", "INFO", "WARNING"],
+            "format": "{time:YYYY-MM-DD HH:mm:ss:SSS} | {level:<8} | {name}:{function}:{line} - {message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression": "zip",
+        },
+        {
+            "sink": BASE_DIR/"logs/error.log",
+            "level": "ERROR",
+            "format": "{time:YYYY-MM-DD HH:mm:ss:SSS} | {level:<8} | {name}:{function}:{line} - {message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression": "zip",
+            "backtrace": True,
+            "diagnose": True,
+        },
+    ],
+}
+
+logger.configure(**LOGURU_LOGGING)
+
+LOGGING ={
+    "version":1,
+    "disable_existing_loggers": False,
+    "handlers":{
+        "loguru":{"class": "interceptor.InterceptHandler"}
+        },
+    "root":{
+        "handler":["loguru"],"level":"DEBUG"
+        },
+}
